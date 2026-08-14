@@ -1,7 +1,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-struct	nes_processeur
+typedef struct	nes_processeur
 {
 	char			A; //accumulateur
 	char			X; //registre d index
@@ -10,11 +10,17 @@ struct	nes_processeur
 	char			P; //flag
 	short int		PC; //program pointer
 	unsigned char	ram[2048]; //Ram
-}
+}	nes_6502;
 
 int	main(int argc, char **argv)
 {
+	int	fd;
 	//charger la rom et lire les instructions
-	(if (argc < 2))
+	if (argc < 2)
 		return (1);
+	fd = open(argv[1], O_RDONLY);
+	if (fd == -1)
+		return (1);
+	
+	close(fd);
 }
