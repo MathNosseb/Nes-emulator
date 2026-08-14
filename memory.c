@@ -1,4 +1,4 @@
-#include <stdint.h>
+#include "processor.h"
 
 uint32_t	translate_adr(uint32_t adr)
 {
