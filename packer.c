@@ -34,6 +34,6 @@ int	main(int argc, char **argv)
 	while (!status)
 	{
 		current = get_byte(argv[1], translate_adr(nes.PC));
-		status = execute_instruction(current, &nes);
+		status = execute_instruction(current, &nes, argv[1]);
 	}
 }
