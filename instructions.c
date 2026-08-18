@@ -18,10 +18,13 @@ void    recalculate_negativ(uint8_t value, nes_6502 *processor)
         processor->P &= 0b01111111;
 }
 
-int    execute_instruction(uint8_t instruction, nes_6502 *processor, char *filename)
+int    execute_instruction(uint8_t instruction, nes_6502 *processor, nes_ppu *ppu)
 {
-    uint8_t low = get_byte(filename, translate_adr(processor->PC + 1));
-    uint8_t high = get_byte(filename, translate_adr(processor->PC + 2));
+    uint8_t low;
+    uint8_t high;
+
+    low = read_ram(processor->PC + 1, processor, ppu);
+    high = read_ram(processor->PC + 2, processor, ppu);
     switch (instruction)
     {
     case 0xD8:
@@ -36,7 +39,6 @@ int    execute_instruction(uint8_t instruction, nes_6502 *processor, char *filen
         break;
     case 0xA2:
         //https://www.nesdev.org/wiki/Instruction_reference#LDX
-        
         processor->X = low;
         recalculate_zero(processor->X, processor);
         recalculate_negativ(processor->X, processor);
@@ -44,12 +46,12 @@ int    execute_instruction(uint8_t instruction, nes_6502 *processor, char *filen
         break;
     case 0x8E:
         //https://www.nesdev.org/wiki/Instruction_reference#STX
-        processor->ram[low | (high << 8)] = processor->X;
+        write_ram(low | (high << 8), processor->X, processor, ppu);
         processor->PC += 3;
         break;
     case 0xAD:
         //https://www.nesdev.org/wiki/Instruction_reference#LDA
-        processor->A = processor->ram[low | (high << 8)];
+        processor->A = read_ram(low | (high << 8), processor, ppu);
         recalculate_zero(processor->A, processor);
         recalculate_negativ(processor->A, processor);
         processor->PC += 3;
@@ -60,12 +62,10 @@ int    execute_instruction(uint8_t instruction, nes_6502 *processor, char *filen
         {
             //si N est a 0
             processor->PC += 2 + (int8_t)low;
-            printf("jump to %d\n", (int8_t)low);
+            printf("jump to %d, ", (int8_t)low);
         }
         else
-        {
             processor->PC += 2;
-        }
         break;
     case 0xCA:
         //https://www.nesdev.org/wiki/Instruction_reference#DEX
@@ -80,9 +80,9 @@ int    execute_instruction(uint8_t instruction, nes_6502 *processor, char *filen
         processor->PC++;
         break;
     default:
-        printf("Instruction %X non reconnue\n", instruction);
+        printf("\033[31mInstruction %X non reconnue\n", instruction);
         return (1);
     }
-    printf("Instruction %X done\n", instruction);
+    printf("\033[32mInstruction %X done, [0x%X]\n", instruction, low | (high << 8));
     return (0);
 }
