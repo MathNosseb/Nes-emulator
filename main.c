@@ -12,6 +12,7 @@ int	main(int argc, char **argv)
 	//charger la rom et lire les instructions
 	if (argc < 2)
 		return (1);
+	ppu.status = 0b10000000;//vblank
 	nes.rom = argv[1];
 	low = read_ram(0xFFFC, &nes, &ppu);
 	high = read_ram(0xFFFD, &nes, &ppu);

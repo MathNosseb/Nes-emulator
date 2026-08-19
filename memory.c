@@ -56,6 +56,7 @@ uint8_t	read_ram(uint16_t adr, nes_6502 *processor, nes_ppu *ppu)
 	}
 	if (adr >= 0x2000 && adr <= 0x2007)
 	{
+		printf("\033[33mtentative lecture PPU a l adresse 0x%X, ", adr);
 		if (adr == 0x2000)
 			return (ppu->ctrl);
 		if (adr == 0x2001)
@@ -64,7 +65,7 @@ uint8_t	read_ram(uint16_t adr, nes_6502 *processor, nes_ppu *ppu)
 			return (ppu->status);
 		if (adr == 0x2003)
 			return (ppu->OAMaddr);
-		printf("\033[33mtentative lecture PPU a l adresse non map 0x%X, ", adr);
+		printf("\033[31mnon map 0x%X, ", adr);
 		return (0); //pas de ppu
 	}
 	printf("\033[31mbad address %X return 0 value, ", adr);
